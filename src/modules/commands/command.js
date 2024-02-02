@@ -21,6 +21,7 @@ module.exports = class Command {
 	 * @param {boolean} data.guild_only - Only allow the command to be used within a guild?
 	 * @param {boolean} data.ephemeral - Ephemeral reply? Default is false
 	 * @param {string[]} [data.permissions] - Array of permissions needed for a user to use this command
+	 * @param {int[]} [data.roles] - Array of roles that allow the user to use this command
 	 * @param {CommandOption[]} [data.options] - The command's options
 	 */
 	constructor(client, data) {
@@ -55,6 +56,12 @@ module.exports = class Command {
 		 */
 		this.permissions = data.permissions ?? [];
 
+		/**
+		 * Array of roles that allow the user to use this command
+		 * @type {int[]}
+		 */
+		this.roles = data.roles ?? [];
+		
 		/**
 		 * The command options
 		 * @type {CommandOption[]}

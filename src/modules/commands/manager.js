@@ -90,8 +90,8 @@ module.exports = class CommandManager {
 		}
 
 		if (interaction.guild) {
-			const missing_permissions = command.permissions instanceof Array && !interaction.member.permissions.has(command.permissions);
-			if (missing_permissions && interaction.user.id !== process.env.OWNER) { // let me bypass permissions check ;)
+			const missing_roles = command.roles instanceof Array && !command.roles.some(role => interaction.member.roles.cache.has(role));
+			if ((missing_permissions || missing_roles ) && interaction.user.id !== process.env.OWNER) { // let me bypass permissions check ;)
 				const permissions = command.permissions.map(p => `\`${p}\``).join(', ');
 				return await interaction[command.defer ? 'editReply' : 'reply']({
 					embeds: [
