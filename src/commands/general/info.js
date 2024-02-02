@@ -18,28 +18,12 @@ module.exports = class AboutCommand extends Command {
 	 * @returns {Promise<void|any>}
 	 */
 	async execute(interaction) {
-		/* const u_settings = await this.client.prisma.user.findUnique({ where: { id: interaction.user.id } });
-		const g_settings = interaction.guild && await this.client.prisma.guild.findUnique({ where: { id: interaction.guild.id } });
-		const i18n = this.client.i18n.getLocale(u_settings?.locale ?? g_settings?.locale);
-		const i18nNumbers = new Intl.NumberFormat(u_settings?.locale ?? g_settings?.locale);
-
-		const shards = await this.client.shard.fetchClientValues('guilds.cache.size');
-		const guilds = shards.reduce((acc, count) => acc + count, 0);
-
-		const enabled = await this.client.prisma.guild.count({ where: { enabled: true } });
-		const ss_events = await this.client.prisma.secretSanta.findMany({ where: { status: 'COMPLETED' } });
-		const ss_users = ss_events.map(event => Object.keys(event.users || {}).length).reduce((acc, users) => acc + users);
-
-		const response = await fetch(`https://api.statcord.com/v3/${this.client.user.id}/aggregate`);
-		const stats = response.ok ? await response.json() : null;
-		const commands = stats  && !stats.error ? stats.data.totalCommands : '?'; */
-
 		return await interaction.editReply({
 			embeds: [
 				new MessageEmbed()
 					.setColor(colour)
-					.setTitle('TEST')
-					.setDescription('IM GOD')
+					.setTitle('This command is under creation.')
+					.setDescription('WIP')
 			]
 		});
 	}

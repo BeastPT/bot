@@ -1,6 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
 const { inspect } = require('util');
-const I18n = require('@eartharoid/i18n');
 const ListenerLoader = require('./modules/listeners/loader');
 const CommandManager = require('./modules/commands/manager');
 const AutocompleteManager = require('./modules/autocomplete/manager');
@@ -44,9 +43,6 @@ class Client extends DiscordClient {
 		this.prisma.$on('info', e => this.log.verbose(e));
 		this.prisma.$on('warn', e => this.log.warn(e));
 		this.prisma.$on('error', e => this.log.critical(e));
-
-		/** @type {I18n} */
-		this.i18n = new I18n('en', require('./locales')());
 
 		const listeners = new ListenerLoader(this);
 		listeners.load();

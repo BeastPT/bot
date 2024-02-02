@@ -19,17 +19,6 @@ module.exports = class MessageCreateEventListener extends EventListener {
 			if (guild) this.client.commands.publish(guild);
 			else this.client.commands.publish();
 			message.reply('ok');
-		} else if (is_owner && message.content.startsWith(`<@${this.client.user.id}> testdb`)) {
-			let user = await this.client.prisma.user.findUnique({ where: { id: message.author.id } });
-			if (!user) {
-				await this.client.prisma.user.create({
-					data: {
-						id: message.author.id,
-					}
-				});
-			}
-
-			this.client.log.debug('Test DB');
 		} else {
 			const regex = new RegExp(`^(x!)|(<@!?${this.client.user.id}>)`, 'i');
 			if (!regex.test(message.content) && message.channel.type !== 'DM') return;
