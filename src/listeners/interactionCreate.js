@@ -23,7 +23,7 @@ module.exports = class InteractionCreateEventListener extends EventListener {
 		} else if (interaction.isButton()) {
 			const id = interaction.customId.split(';');
 
-			if (id[0] === 'joke') {
+			/* if (id[0] === 'joke') {
 				await interaction.deferUpdate();
 				const u_settings = await this.client.prisma.user.findUnique({ where: { id: interaction.user.id } });
 				const g_settings = interaction.guild && await this.client.prisma.guild.findUnique({ where: { id: interaction.guild.id } });
@@ -51,15 +51,15 @@ module.exports = class InteractionCreateEventListener extends EventListener {
 							.setFooter(i18n('bot.footer'), this.client.user.avatarURL())
 					]
 				});
-			}
+			} */
 		} else if (interaction.isModalSubmit()) {
 			await interaction.deferReply();
-			const u_settings = await this.client.prisma.user.findUnique({ where: { id: interaction.user.id } });
+			/* const u_settings = await this.client.prisma.user.findUnique({ where: { id: interaction.user.id } });
 			const g_settings = interaction.guild && await this.client.prisma.guild.findUnique({ where: { id: interaction.guild.id } });
-			const i18n = this.client.i18n.getLocale(u_settings?.locale ?? g_settings?.locale);
+			const i18n = this.client.i18n.getLocale(u_settings?.locale ?? g_settings?.locale); */
 			const id = interaction.customId.split(';');
 
-			if (id[0] === 'suggestion') {
+			/* if (id[0] === 'suggestion') {
 				const suggestion = interaction.fields.getTextInputValue('suggestion');
 				const webhook = new WebhookClient({ url: process.env.SUGGESTIONS_WEBHOOK });
 				await webhook.send({
@@ -107,7 +107,7 @@ module.exports = class InteractionCreateEventListener extends EventListener {
 							.setFooter(i18n('bot.footer'), this.client.user.avatarURL())
 					]
 				});
-			}
+			} */
 		}
 	}
 };

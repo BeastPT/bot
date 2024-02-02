@@ -21,7 +21,7 @@ module.exports = class PingCommand extends Command {
 	async execute(interaction) {
 		const u_settings = await this.client.prisma.user.findUnique({ where: { id: interaction.user.id } });
 		const g_settings = interaction.guild && await this.client.prisma.guild.findUnique({ where: { id: interaction.guild.id } });
-		const locale = u_settings?.locale ?? g_settings?.locale ?? 'en-GB';
+		const locale = u_settings?.locale ?? g_settings?.locale ?? 'en';
 		const i18n = this.client.i18n.getLocale(locale);
 		const dtf = new DTF(locale);
 

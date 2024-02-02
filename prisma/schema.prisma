@@ -8,38 +8,48 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-model Guild {
-  id                     String        @id @unique @db.VarChar(19)
-  webhook                String?
-  last_sent              DateTime?
-  locale                 String        @default("en-GB")
-  timezone               String        @default("UTC")
-  enabled                Boolean       @default(false)
-  auto_toggle            Boolean       @default(false)
-  mention                String?
-  secret_santa           SecretSanta[]
-  secret_santa_blacklist Json          @default("[]")
-  voice_channel          String?       @db.VarChar(19)
-}
-
 model User {
-  id       String  @id @unique @db.VarChar(19)
-  locale   String?
-  timezone String?
+  id           String     @id @unique @db.VarChar(19)
+  locale       String?
+  developer    Developer?
+  requestAsked Request[]
+
+  @@map("users")
 }
 
-model SecretSanta {
-  id       String      @id @unique @db.VarChar(19)
-  guild_id String      @db.VarChar(19)
-  guild    Guild       @relation(fields: [guild_id], references: [id])
-  status   EventStatus
-  date     DateTime
-  users    Json?
+model Developer {
+  id           String    @id @unique @db.VarChar(19)
+  user         User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  requestDone  Request[]
+  totalPrice   Int?      @default(0)
+  totalMinutes Int?      @default(0)
+  missingPay   Int?      @default(0)
+  taxPaid      Int?      @default(0)
+
+  @@map("developers")
 }
 
-enum EventStatus {
-  SCHEDULED
-  ACTIVE
-  COMPLETED
-  CANCELLED
+model Request {
+  id             Int         @id @default(autoincrement())
+  ticketId       String      @unique
+  createdAt      DateTime    @default(now())
+  finishedAt     DateTime?
+  token          String      @unique @default(uuid())
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String      @db.VarChar(19)
+  developer      Developer?  @relation(fields: [developerId], references: [id], onDelete: Cascade)
+  developerId    String?     @db.VarChar(19)
+  time           Int?        @default(0)
+  timerTimestamp DateTime?
+  cost           Int?        @default(0)
+  type           RequestType?
+
+  @@map("requests")
+}
+
+enum RequestType {
+  BACKEND
+  NUI
+  THREED
+  DESIGN
 }

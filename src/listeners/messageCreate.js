@@ -1,14 +1,5 @@
-const {
-	colour,
-	haste_server
-} = require('../../config');
-const {
-	Message, // eslint-disable-line no-unused-vars
-	MessageEmbed
-} = require('discord.js');
+const { Message } = require('discord.js');
 const EventListener = require('../modules/listeners/listener');
-const fetch = require('node-fetch');
-const { inspect } = require('util');
 
 module.exports = class MessageCreateEventListener extends EventListener {
 	constructor(client) {
@@ -28,78 +19,27 @@ module.exports = class MessageCreateEventListener extends EventListener {
 			if (guild) this.client.commands.publish(guild);
 			else this.client.commands.publish();
 			message.reply('ok');
-		} else if (is_owner && message.content.startsWith(`<@${this.client.user.id}> unsync`)) {
-			const guild = message.content.split(' ')[2];
-			if (!guild) return message.reply('no guild');
-			this.client.application.commands.set([], guild);
-			message.reply('ok');
-		} else if (is_owner && message.content.startsWith(`<@${this.client.user.id}> eval`)) {
-			const tokens = message.content.split(' ').slice(2);
-			const code = tokens.join(' ');
-			let evaled;
-			let url;
-			let promise = false;
-			try {
-				evaled = eval(code);
-
-				if (evaled instanceof Promise) {
-					evaled = await evaled;
-					promise = true;
-				}
-
-				if (typeof evaled !== 'string') evaled = inspect(evaled, { colors: false });
-
-				evaled = evaled.replaceAll(this.client.token, '[CLIENT TOKEN REDACTED]');
-
-				if (evaled.length < 100) {
-					evaled = evaled.replace(/`/g, '`' + String.fromCharCode(8203));
-				} else {
-					const res = await fetch(`${haste_server}/documents`, {
-						body: evaled,
-						method: 'POST'
-					});
-
-					if (res.ok) url = `${haste_server}/${(await res.json()).key}`;
-					else throw new Error('Failed to POST output');
-				}
-
-				const title = `Output ${promise ? '(resolved `Promise`)' : ''}`;
-				message.reply({
-					embeds: [
-						new MessageEmbed()
-							.setColor(colour)
-							.setTitle('Evaluation')
-							.addField(title, url ? url : `\`\`\`json\n${evaled}\`\`\``)
-							.setTimestamp()
-					]
-				});
-
-			} catch (error) {
-				const text = typeof error === 'string' ? error : inspect(error, { colors: false });
-				message.reply({
-					embeds: [
-						new MessageEmbed()
-							.setColor(colour)
-							.setTitle('Evaluation')
-							.addField('Error', `\`\`\`json\n${text.substring(0, 990)}\`\`\``)
-							.setTimestamp()
-					]
+		} else if (is_owner && message.content.startsWith(`<@${this.client.user.id}> testdb`)) {
+			let user = await this.client.prisma.user.findUnique({ where: { id: message.author.id } });
+			if (!user) {
+				await this.client.prisma.user.create({
+					data: {
+						id: message.author.id,
+					}
 				});
 			}
+
+			this.client.log.debug('Test DB');
 		} else {
 			const regex = new RegExp(`^(x!)|(<@!?${this.client.user.id}>)`, 'i');
 			if (!regex.test(message.content) && message.channel.type !== 'DM') return;
-
+	
 			this.client.log.info(`Received message from ${message.author.tag}`);
-
-			const u_settings = await this.client.prisma.user.findUnique({ where: { id: message.author.id } });
-			const g_settings = message.guild && await this.client.prisma.guild.findUnique({ where: { id: message.guild.id } });
-			const i18n = this.client.i18n.getLocale(u_settings?.locale ?? g_settings?.locale);
-
-			message.reply(i18n('bot.migrate'))
-				.catch(() => message.channel.send(i18n('bot.migrate'))
+	
+			message.reply('BOT MIGRATE')
+				.catch(() => message.channel.send('BOT MIGRATE')
 					.catch(error => this.client.log.error(error)));
-
 		}
+
 	}
 };

@@ -4,7 +4,6 @@ const I18n = require('@eartharoid/i18n');
 const ListenerLoader = require('./modules/listeners/loader');
 const CommandManager = require('./modules/commands/manager');
 const AutocompleteManager = require('./modules/autocomplete/manager');
-const SecretSanta = require('./secret-santa');
 const {
 	Client: DiscordClient,
 	LimitedCollection,
@@ -47,7 +46,7 @@ class Client extends DiscordClient {
 		this.prisma.$on('error', e => this.log.critical(e));
 
 		/** @type {I18n} */
-		this.i18n = new I18n('en-GB', require('./locales')());
+		this.i18n = new I18n('en', require('./locales')());
 
 		const listeners = new ListenerLoader(this);
 		listeners.load();
@@ -57,9 +56,6 @@ class Client extends DiscordClient {
 
 		/** @type {AutocompleteManager} */
 		this.autocomplete = new AutocompleteManager(this);
-
-		/** @type {SecretSanta} */
-		this.secret_santa = new SecretSanta(this);
 
 		this.login();
 	}
